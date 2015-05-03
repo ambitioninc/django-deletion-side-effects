@@ -27,28 +27,63 @@ def register_deletion_side_effects(sender):
     return _register_deletion_side_effects_wrapper
 
 
-def gather_deletion_side_effects(obj):
+def _recursive_gather_delection_side_effects(obj_class, objs, gathered_side_effects, gathered_deleted_objs):
+    gathered_deleted_objs.add(objs)
+
+    side_effect_objs, deleted_objs = zip(chain(*[
+        deletion_side_effects(obj_class).get_side_effects(objs)
+        for deletion_side_effects in _DELETION_SIDE_EFFECTS[obj_class]
+    ]))
+
+    gathered_side_effects[_DELETION_SIDE_EFFECTS[obj_class]].add(*side_effect_objs)
+
+    # Organize all deleted objects into a mapping of their classes. Only populate deleted objects
+    # here that have not been deleted before in order to avoid circular deletions.
+    mapped_deleted_objs = defaultdict(set)
+    for obj in deleted_objs & gathered_deleted_objs:
+        mapped_deleted_objs[obj.__class__].add(obj)
+
+    for deleted_class, deleted_objs in mapped_deleted_objs.items():
+        _recursive_gather_delection_side_effects(
+            deleted_class, deleted_objs, gathered_side_effects, gathered_deleted_objs)
+
+    return gathered_side_effects
+
+
+def gather_deletion_side_effects(obj_class, objs):
     """
-    Given an object, gather the side effects of deleting it as a list of messages.
+    Given an object, gather the side effects of deleting it.
     """
-    return chain(*[
-        deletion_side_effects(obj) for deletion_side_effects in _DELETION_SIDE_EFFECTS
-    ])
+    # Recursively gather all side effects
+    gathered_side_effects = _recursive_gather_delection_side_effects(obj_class, objs, defaultdict(set), set())
+
+    # Render the side effect messages and reorganize the output
+    return [
+        {
+            'msg': side_effect.get_side_effect_message(side_effect_objs),
+            'side_effect_objs': side_effect_objs,
+        }
+        for side_effect, side_effect_objs in gathered_side_effects.items()
+    ]
 
 
 class BaseDeletionSideEffects(object):
     """
     Provides the interface for a user to make a delection side effects class.
     """
-    def get_side_effects(obj_model, objects):
+    def __init__(self, deleted_obj_class):
+        self.deleted_obj_class = deleted_obj_class
+
+    def get_side_effects(self, deleted_objects):
         """
-        Returns a tuple. The first part of the tuple is list of objects in the passed object list that
+        Returns a tuple. The first part of the tuple is list of objects that
         have side effects associated with them. The second part of the tuple is a list of other objects
-        that will be deleted as a result of the passed objects being deleted.
+        that will be deleted as a result of the passed objects being deleted. Side effects of other deleted
+        models will be populated when gather_deletion_side_effects is called.
         """
         return ([], [])
 
-    def get_side_effect_message(obj_model, objects):
+    def get_side_effect_message(self, side_effect_objects):
         """
         Given a list of objects that have this side effect associated with them, return a human
         readable message about the side effect.
