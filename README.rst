@@ -14,11 +14,9 @@
 
 
 django-deletion-side-effects
-===============
+============================
 
-
-I have failed to provide a good README.rst in my project, and you should shun
-me if I do any pull requests
+Django Deletion Side Effects provides a framework for gathering side effects of deleting objects in Django.
 
 Installation
 ------------

@@ -2,7 +2,6 @@
 branch = True
 omit =
     deletion_side_effects/migrations/*
-    deletion_side_effects/tests/*
     deletion_side_effects/version.py
 source = deletion_side_effects
 [report]
