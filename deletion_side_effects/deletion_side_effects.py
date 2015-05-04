@@ -29,7 +29,7 @@ def register_deletion_side_effects():
     return _register_deletion_side_effects_wrapper
 
 
-def _recursive_gather_delection_side_effects(deleted_obj_class, deleted_objs, all_side_effects, all_deleted_objs):
+def _recursive_gather_deletion_side_effects(deleted_obj_class, deleted_objs, all_side_effects, all_deleted_objs):
     # The objects being passed in are deleted, so add them to the set of all deleted objects
     all_deleted_objs |= set(deleted_objs)
 
@@ -49,7 +49,7 @@ def _recursive_gather_delection_side_effects(deleted_obj_class, deleted_objs, al
 
     for deleted_class, deleted_objs in all_cascade_deleted_objs.items():
         # Gather cascading deletion side effects
-        _recursive_gather_delection_side_effects(
+        _recursive_gather_deletion_side_effects(
             deleted_class, deleted_objs, all_side_effects, all_deleted_objs)
 
     return all_side_effects
@@ -64,7 +64,7 @@ def gather_deletion_side_effects(obj_class, objs):
     2. side_effect_objs: This key contains a list of ever object related to this side effect and the message.
     """
     # Recursively gather all side effects
-    gathered_side_effects = _recursive_gather_delection_side_effects(obj_class, objs, defaultdict(set), set())
+    gathered_side_effects = _recursive_gather_deletion_side_effects(obj_class, objs, defaultdict(set), set())
 
     # Render the side effect messages and reorganize the output
     return [
@@ -78,7 +78,7 @@ def gather_deletion_side_effects(obj_class, objs):
 
 class BaseDeletionSideEffects(object):
     """
-    Provides the interface for a user to make a delection side effects class. The user must define
+    Provides the interface for a user to make a deletion side effects class. The user must define
     the following:
 
     1. A `deleted_obj_class` variable. This variable denotes the class of the object being deleted.

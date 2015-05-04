@@ -120,11 +120,11 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
         self.assertEquals(set(side_effects[1]['side_effect_objs']), set(users))
 
 
-class TestRegisterDelectionSideEffects(SimpleTestCase):
+class TestRegisterDeletionSideEffects(SimpleTestCase):
     def setUp(self):
         _DELETION_SIDE_EFFECTS.clear()
 
-    def test_register_delection_side_effects_single(self):
+    def test_register_deletion_side_effects_single(self):
         class MyDeletionSideEffects(BaseDeletionSideEffects):
             deleted_obj_class = ContentType
 
@@ -133,7 +133,7 @@ class TestRegisterDelectionSideEffects(SimpleTestCase):
             ContentType: set([MyDeletionSideEffects])
         })
 
-    def test_register_delection_side_effects_duplicates(self):
+    def test_register_deletion_side_effects_duplicates(self):
         class MyDeletionSideEffects(BaseDeletionSideEffects):
             deleted_obj_class = ContentType
 
@@ -143,7 +143,7 @@ class TestRegisterDelectionSideEffects(SimpleTestCase):
             ContentType: set([MyDeletionSideEffects])
         })
 
-    def test_register_delection_side_effects_multiple(self):
+    def test_register_deletion_side_effects_multiple(self):
         class MyDeletionSideEffects(BaseDeletionSideEffects):
             deleted_obj_class = ContentType
 
@@ -156,13 +156,13 @@ class TestRegisterDelectionSideEffects(SimpleTestCase):
             ContentType: set([MyDeletionSideEffects, MyOtherDeletionSideEffects])
         })
 
-    def test_register_delection_invalid_side_effects_no_obj_class(self):
+    def test_register_deletion_invalid_side_effects_no_obj_class(self):
         class MyDeletionSideEffects(BaseDeletionSideEffects):
             deleted_obj_class = None
 
         with self.assertRaises(ValueError):
             register_deletion_side_effects()(MyDeletionSideEffects)
 
-    def test_register_delection_invalid_side_effects_wrong_inheritance(self):
+    def test_register_deletion_invalid_side_effects_wrong_inheritance(self):
         with self.assertRaises(ValueError):
             register_deletion_side_effects()(object)
