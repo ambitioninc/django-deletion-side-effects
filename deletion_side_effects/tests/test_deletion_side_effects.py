@@ -72,6 +72,8 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
 
         ct = ContentType(id=1)
         side_effects = gather_deletion_side_effects(ContentType, [ct])
+        side_effects = sorted(side_effects, key=lambda k: k['msg'])
+
         self.assertEquals(side_effects, [{
             'msg': '1 ctypes deleted',
             'side_effect_objs': [ctype],
@@ -79,6 +81,40 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
             'msg': '1 users deleted',
             'side_effect_objs': [user],
         }])
+
+    def test_cascaded_multiple_side_effects(self):
+        ctypes = [G(ContentType), G(ContentType)]
+        users = [G(User), G(User)]
+
+        class CTypeDeletionSideEffects(BaseDeletionSideEffects):
+            deleted_obj_class = ContentType
+
+            def get_side_effects(self, deleted_objs):
+                return ctypes, users
+
+            def get_side_effect_message(self, side_effect_objs):
+                return '{0} ctypes deleted'.format(len(side_effect_objs))
+
+        class UserDeletionSideEffects(BaseDeletionSideEffects):
+            deleted_obj_class = ContentType
+
+            def get_side_effects(self, deleted_objs):
+                return users, []
+
+            def get_side_effect_message(self, side_effect_objs):
+                return '{0} users deleted'.format(len(side_effect_objs))
+
+        register_deletion_side_effects()(CTypeDeletionSideEffects)
+        register_deletion_side_effects()(UserDeletionSideEffects)
+
+        ct = ContentType(id=1)
+        side_effects = gather_deletion_side_effects(ContentType, [ct])
+        side_effects = sorted(side_effects, key=lambda k: k['msg'])
+
+        self.assertEquals(side_effects[0]['msg'], '2 ctypes deleted')
+        self.assertEquals(set(side_effects[0]['side_effect_objs']), set(ctypes))
+        self.assertEquals(side_effects[1]['msg'], '2 users deleted')
+        self.assertEquals(set(side_effects[1]['side_effect_objs']), set(users))
 
 
 class TestRegisterDelectionSideEffects(SimpleTestCase):

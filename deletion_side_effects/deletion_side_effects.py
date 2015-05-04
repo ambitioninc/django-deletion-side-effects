@@ -30,7 +30,7 @@ def register_deletion_side_effects():
 
 def _recursive_gather_delection_side_effects(deleted_obj_class, deleted_objs, all_side_effects, all_deleted_objs):
     # The objects being passed in are deleted, so add them to the set of all deleted objects
-    all_deleted_objs.add(*deleted_objs)
+    all_deleted_objs |= set(deleted_objs)
 
     # Pass the deleted objects through the registered side effect classes for the deleted object class
     all_cascade_deleted_objs = defaultdict(set)
@@ -40,7 +40,7 @@ def _recursive_gather_delection_side_effects(deleted_obj_class, deleted_objs, al
         # Add the side effects from this round of recursion to the set of all side effects for that side effect
         # class so far
         if side_effect_objs:
-            all_side_effects[side_effects_class].add(*side_effect_objs)
+            all_side_effects[side_effects_class] |= set(side_effect_objs)
 
         # Add to the set of all cascade deleted objects this round. This is keyed on object type
         for cascade_deleted_obj in [o for o in cascade_deleted_objs if o not in all_deleted_objs]:
