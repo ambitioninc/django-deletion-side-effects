@@ -18,6 +18,9 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
         class MyDeletionSideEffects(BaseDeletionSideEffects):
             deleted_obj_class = ContentType
 
+            def get_side_effects(self, deleted_objs):
+                return ([], [])
+
         register_deletion_side_effects()(MyDeletionSideEffects)
 
         ct = ContentType(id=1)
@@ -153,6 +156,13 @@ class TestRegisterDelectionSideEffects(SimpleTestCase):
             ContentType: set([MyDeletionSideEffects, MyOtherDeletionSideEffects])
         })
 
-    def test_register_delection_invalid_side_effects_single(self):
+    def test_register_delection_invalid_side_effects_no_obj_class(self):
+        class MyDeletionSideEffects(BaseDeletionSideEffects):
+            deleted_obj_class = None
+
+        with self.assertRaises(ValueError):
+            register_deletion_side_effects()(MyDeletionSideEffects)
+
+    def test_register_delection_invalid_side_effects_wrong_inheritance(self):
         with self.assertRaises(ValueError):
             register_deletion_side_effects()(object)

@@ -102,11 +102,11 @@ class BaseDeletionSideEffects(object):
         that will be deleted as a result of the passed objects being deleted. Side effects of other deleted
         models will be populated when gather_deletion_side_effects is called.
         """
-        return ([], [])
+        raise NotImplementedError
 
     def get_side_effect_message(self, side_effect_objects):
         """
         Given a list of objects that have this side effect associated with them, return a human
         readable message about the side effect.
         """
-        return ''
+        raise NotImplementedError
