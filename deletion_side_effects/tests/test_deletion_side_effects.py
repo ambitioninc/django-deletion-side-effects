@@ -1,5 +1,7 @@
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.test import SimpleTestCase
+from django_dynamic_fixture import G
 from mock import Mock
 
 from deletion_side_effects.deletion_side_effects import (
@@ -41,6 +43,41 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
         self.assertEquals(side_effects, [{
             'msg': '1 objs deleted, first value hi',
             'side_effect_objs': [side_effect_obj],
+        }])
+
+    def test_cascaded_side_effects(self):
+        ctype = G(ContentType)
+        user = G(User)
+
+        class CTypeDeletionSideEffects(BaseDeletionSideEffects):
+            deleted_obj_class = ContentType
+
+            def get_side_effects(self, deleted_objs):
+                return [ctype], [user]
+
+            def get_side_effect_message(self, side_effect_objs):
+                return '{0} ctypes deleted'.format(len(side_effect_objs))
+
+        class UserDeletionSideEffects(BaseDeletionSideEffects):
+            deleted_obj_class = ContentType
+
+            def get_side_effects(self, deleted_objs):
+                return [user], []
+
+            def get_side_effect_message(self, side_effect_objs):
+                return '{0} users deleted'.format(len(side_effect_objs))
+
+        register_deletion_side_effects()(CTypeDeletionSideEffects)
+        register_deletion_side_effects()(UserDeletionSideEffects)
+
+        ct = ContentType(id=1)
+        side_effects = gather_deletion_side_effects(ContentType, [ct])
+        self.assertEquals(side_effects, [{
+            'msg': '1 ctypes deleted',
+            'side_effect_objs': [ctype],
+        }, {
+            'msg': '1 users deleted',
+            'side_effect_objs': [user],
         }])
 
 
