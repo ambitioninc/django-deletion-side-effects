@@ -7,18 +7,19 @@ _DELETION_SIDE_EFFECTS = defaultdict(set)
 
 def register_deletion_side_effects():
     """
-    Registers the function as a deletion side effect handler. This function
-    should return a list of side effects that occur when a provided object is about to
-    be deleted.
+    Registers a deletion side effect handler class. The class must inherit BaseDeletionSideEffects
+    and define a deleted_obj_class variable.
 
-    @register_deletion_side_effects
-    def fantasy_app_deletion(obj):
-        # Return a list of side effects for the fantasy app when obj is deleted
-        pass
+    .. code-block:: python
+
+        @register_deletion_side_effects
+        def fantasy_app_deletion(obj):
+            # Return a list of side effects for the fantasy app when obj is deleted
+            pass
     """
     def _register_deletion_side_effects_wrapper(deletion_side_effects_handler):
         if not issubclass(deletion_side_effects_handler, BaseDeletionSideEffects):
-            raise ValueError('Deletion side effects handler must inherit BaseDelectionSideEffects')
+            raise ValueError('Deletion side effects handler must inherit BaseDeletionSideEffects')
         elif deletion_side_effects_handler.deleted_obj_class is None:
             raise ValueError('Deletion side effects handler must define a deleted_obj_class variable')
 
@@ -56,7 +57,11 @@ def _recursive_gather_delection_side_effects(deleted_obj_class, deleted_objs, al
 
 def gather_deletion_side_effects(obj_class, objs):
     """
-    Given an object, gather the side effects of deleting it.
+    Given an object, gather the side effects of deleting it. The return value is a list of dictionaries, each
+    of which contain the following keys:
+
+    1. msg - This key contains a human-readable message of the side effect.
+    2. side_effect_objs: This key contains a list of ever object related to this side effect and the message.
     """
     # Recursively gather all side effects
     gathered_side_effects = _recursive_gather_delection_side_effects(obj_class, objs, defaultdict(set), set())
@@ -73,7 +78,20 @@ def gather_deletion_side_effects(obj_class, objs):
 
 class BaseDeletionSideEffects(object):
     """
-    Provides the interface for a user to make a delection side effects class.
+    Provides the interface for a user to make a delection side effects class. The user must define
+    the following:
+
+    1. A `deleted_obj_class` variable. This variable denotes the class of the object being deleted.
+
+    2. A 'get_side_effects` method. This method is passed a list of objects of `deleted_obj_class`\
+    type that are candidates for deletion. The method returns a tuple of objects that are affected by deletion\
+    of the objects for deletion (i.e the side effect objects) and a list of objects that will be cascade deleted\
+    if the candidate objects are deleted.
+
+    3. A `get_side_effect_message` method. This method is passed all of the side effect objects from\
+    gathering side effects with the class. The method is responsible for returning a human-readable string of\
+    he side effects.
+
     """
     deleted_obj_class = None
 
