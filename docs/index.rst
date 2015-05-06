@@ -33,7 +33,6 @@ In this case, a `Group` will be cascade deleted with the deletion of a `GroupTyp
     from deletion_side_effects import register_deletion_side_effects, BaseDeletionSideEffects
 
 
-    @register_deletion_side_effects()
     class CascadeGroupDeletionSideEffect(BaseDeletionSideEffect):
         deleted_obj_class = GroupType
 
@@ -51,8 +50,11 @@ In this case, a `Group` will be cascade deleted with the deletion of a `GroupTyp
             """
             return u'{0} group{1} will be deleted'.format(len(side_effect_objs), 's' if len(side_effect_objs) > 1 else '')
 
+    # Register the side effect. Note that this is best called in the App Config's ready() method
+    register_deletion_side_effects(CascadeGroupDeletionSideEffect)
 
-In the above example, the side effect class inherits `BaseDeletionSideEffects`. The side effect handler is registered with the `register_deletion_side_effects` decorator. Note that the side effect handlers will need to be imported in the app config's `ready` method for your app with side effects.
+
+In the above example, the side effect class inherits `BaseDeletionSideEffects`. The side effect handler is registered with the `register_deletion_side_effects` function. Note that the side effect handlers will need to be connected in the app config's `ready` method for your app with side effects.
 
 
 Gathering Side Effects
