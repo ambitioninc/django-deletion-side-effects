@@ -21,7 +21,7 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
             def get_side_effects(self, deleted_objs):
                 return ([], [])
 
-        register_deletion_side_effects()(MyDeletionSideEffects)
+        register_deletion_side_effects(MyDeletionSideEffects)
 
         ct = ContentType(id=1)
         side_effects = gather_deletion_side_effects(ContentType, [ct])
@@ -39,7 +39,7 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
             def get_side_effect_message(self, side_effect_objs):
                 return '{0} objs deleted, first value {1}'.format(len(side_effect_objs), side_effect_objs[0].value)
 
-        register_deletion_side_effects()(MyDeletionSideEffects)
+        register_deletion_side_effects(MyDeletionSideEffects)
 
         ct = ContentType(id=1)
         side_effects = gather_deletion_side_effects(ContentType, [ct])
@@ -70,8 +70,8 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
             def get_side_effect_message(self, side_effect_objs):
                 return '{0} users deleted'.format(len(side_effect_objs))
 
-        register_deletion_side_effects()(CTypeDeletionSideEffects)
-        register_deletion_side_effects()(UserDeletionSideEffects)
+        register_deletion_side_effects(CTypeDeletionSideEffects)
+        register_deletion_side_effects(UserDeletionSideEffects)
 
         ct = ContentType(id=1)
         side_effects = gather_deletion_side_effects(ContentType, [ct])
@@ -107,8 +107,8 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
             def get_side_effect_message(self, side_effect_objs):
                 return '{0} users deleted'.format(len(side_effect_objs))
 
-        register_deletion_side_effects()(CTypeDeletionSideEffects)
-        register_deletion_side_effects()(UserDeletionSideEffects)
+        register_deletion_side_effects(CTypeDeletionSideEffects)
+        register_deletion_side_effects(UserDeletionSideEffects)
 
         ct = ContentType(id=1)
         side_effects = gather_deletion_side_effects(ContentType, [ct])
@@ -128,7 +128,7 @@ class TestRegisterDeletionSideEffects(SimpleTestCase):
         class MyDeletionSideEffects(BaseDeletionSideEffects):
             deleted_obj_class = ContentType
 
-        register_deletion_side_effects()(MyDeletionSideEffects)
+        register_deletion_side_effects(MyDeletionSideEffects)
         self.assertEquals(_DELETION_SIDE_EFFECTS, {
             ContentType: set([MyDeletionSideEffects])
         })
@@ -137,8 +137,8 @@ class TestRegisterDeletionSideEffects(SimpleTestCase):
         class MyDeletionSideEffects(BaseDeletionSideEffects):
             deleted_obj_class = ContentType
 
-        register_deletion_side_effects()(MyDeletionSideEffects)
-        register_deletion_side_effects()(MyDeletionSideEffects)
+        register_deletion_side_effects(MyDeletionSideEffects)
+        register_deletion_side_effects(MyDeletionSideEffects)
         self.assertEquals(_DELETION_SIDE_EFFECTS, {
             ContentType: set([MyDeletionSideEffects])
         })
@@ -150,8 +150,8 @@ class TestRegisterDeletionSideEffects(SimpleTestCase):
         class MyOtherDeletionSideEffects(BaseDeletionSideEffects):
             deleted_obj_class = ContentType
 
-        register_deletion_side_effects()(MyDeletionSideEffects)
-        register_deletion_side_effects()(MyOtherDeletionSideEffects)
+        register_deletion_side_effects(MyDeletionSideEffects)
+        register_deletion_side_effects(MyOtherDeletionSideEffects)
         self.assertEquals(_DELETION_SIDE_EFFECTS, {
             ContentType: set([MyDeletionSideEffects, MyOtherDeletionSideEffects])
         })
@@ -161,8 +161,8 @@ class TestRegisterDeletionSideEffects(SimpleTestCase):
             deleted_obj_class = None
 
         with self.assertRaises(ValueError):
-            register_deletion_side_effects()(MyDeletionSideEffects)
+            register_deletion_side_effects(MyDeletionSideEffects)
 
     def test_register_deletion_invalid_side_effects_wrong_inheritance(self):
         with self.assertRaises(ValueError):
-            register_deletion_side_effects()(object)
+            register_deletion_side_effects(object)

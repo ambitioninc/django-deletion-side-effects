@@ -5,28 +5,18 @@ from collections import defaultdict
 _DELETION_SIDE_EFFECTS = defaultdict(set)
 
 
-def register_deletion_side_effects():
+def register_deletion_side_effects(*deletion_side_effects_handlers):
     """
-    Registers a deletion side effect handler class. The class must inherit BaseDeletionSideEffects
+    Registers deletion side effect handler classes. The class must inherit BaseDeletionSideEffects
     and define a deleted_obj_class variable.
-
-    .. code-block:: python
-
-        @register_deletion_side_effects
-        def fantasy_app_deletion(obj):
-            # Return a list of side effects for the fantasy app when obj is deleted
-            pass
     """
-    def _register_deletion_side_effects_wrapper(deletion_side_effects_handler):
+    for deletion_side_effects_handler in deletion_side_effects_handlers:
         if not issubclass(deletion_side_effects_handler, BaseDeletionSideEffects):
             raise ValueError('Deletion side effects handler must inherit BaseDeletionSideEffects')
         elif deletion_side_effects_handler.deleted_obj_class is None:
             raise ValueError('Deletion side effects handler must define a deleted_obj_class variable')
 
         _DELETION_SIDE_EFFECTS[deletion_side_effects_handler.deleted_obj_class].add(deletion_side_effects_handler)
-        return deletion_side_effects_handler
-
-    return _register_deletion_side_effects_wrapper
 
 
 def _recursive_gather_deletion_side_effects(deleted_obj_class, deleted_objs, all_side_effects, all_deleted_objs):
