@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.test import SimpleTestCase
+from django.test import TransactionTestCase
 from django_dynamic_fixture import G
 from mock import Mock
 
@@ -10,7 +10,7 @@ from deletion_side_effects.deletion_side_effects import (
 )
 
 
-class TestGatherDeletionSideEffects(SimpleTestCase):
+class TestGatherDeletionSideEffects(TransactionTestCase):
     def setUp(self):
         _DELETION_SIDE_EFFECTS.clear()
 
@@ -120,7 +120,7 @@ class TestGatherDeletionSideEffects(SimpleTestCase):
         self.assertEquals(set(side_effects[1]['side_effect_objs']), set(users))
 
 
-class TestRegisterDeletionSideEffects(SimpleTestCase):
+class TestRegisterDeletionSideEffects(TransactionTestCase):
     def setUp(self):
         _DELETION_SIDE_EFFECTS.clear()
 
