@@ -4,11 +4,11 @@
 .. image:: https://coveralls.io/repos/ambitioninc/django-deletion-side-effects/badge.png?branch=develop
     :target: https://coveralls.io/r/ambitioninc/django-deletion-side-effects?branch=develop
 
-.. image:: https://pypip.in/v/django-deletion-side-effects/badge.png
+.. image:: https://img.shields.io/pypi/v/django-deletion-side-effects.svg
     :target: https://pypi.python.org/pypi/django-deletion-side-effects/
     :alt: Latest PyPI version
 
-.. image:: https://pypip.in/d/django-deletion-side-effects/badge.png
+.. image:: https://img.shields.io/pypi/dm/django-deletion-side-effects.svg
     :target: https://pypi.python.org/pypi/django-deletion-side-effects/
     :alt: Number of PyPI downloads
 
