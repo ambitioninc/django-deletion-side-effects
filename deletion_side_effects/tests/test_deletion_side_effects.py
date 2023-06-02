@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.test import TransactionTestCase
 from django_dynamic_fixture import G
-from mock import Mock
+from unittest.mock import Mock
 
 from deletion_side_effects.deletion_side_effects import (
     BaseDeletionSideEffects, register_deletion_side_effects,
@@ -25,7 +25,7 @@ class TestGatherDeletionSideEffects(TransactionTestCase):
 
         ct = ContentType(id=1)
         side_effects = gather_deletion_side_effects(ContentType, [ct])
-        self.assertEquals(side_effects, [])
+        self.assertEqual(side_effects, [])
 
     def test_one_side_effect(self):
         side_effect_obj = Mock(value='hi')
@@ -43,7 +43,7 @@ class TestGatherDeletionSideEffects(TransactionTestCase):
 
         ct = ContentType(id=1)
         side_effects = gather_deletion_side_effects(ContentType, [ct])
-        self.assertEquals(side_effects, [{
+        self.assertEqual(side_effects, [{
             'msg': '1 objs deleted, first value hi',
             'side_effect_objs': [side_effect_obj],
         }])
@@ -77,7 +77,7 @@ class TestGatherDeletionSideEffects(TransactionTestCase):
         side_effects = gather_deletion_side_effects(ContentType, [ct])
         side_effects = sorted(side_effects, key=lambda k: k['msg'])
 
-        self.assertEquals(side_effects, [{
+        self.assertEqual(side_effects, [{
             'msg': '1 ctypes deleted',
             'side_effect_objs': [ctype],
         }, {
@@ -114,10 +114,10 @@ class TestGatherDeletionSideEffects(TransactionTestCase):
         side_effects = gather_deletion_side_effects(ContentType, [ct])
         side_effects = sorted(side_effects, key=lambda k: k['msg'])
 
-        self.assertEquals(side_effects[0]['msg'], '2 ctypes deleted')
-        self.assertEquals(set(side_effects[0]['side_effect_objs']), set(ctypes))
-        self.assertEquals(side_effects[1]['msg'], '2 users deleted')
-        self.assertEquals(set(side_effects[1]['side_effect_objs']), set(users))
+        self.assertEqual(side_effects[0]['msg'], '2 ctypes deleted')
+        self.assertEqual(set(side_effects[0]['side_effect_objs']), set(ctypes))
+        self.assertEqual(side_effects[1]['msg'], '2 users deleted')
+        self.assertEqual(set(side_effects[1]['side_effect_objs']), set(users))
 
 
 class TestRegisterDeletionSideEffects(TransactionTestCase):
@@ -129,7 +129,7 @@ class TestRegisterDeletionSideEffects(TransactionTestCase):
             deleted_obj_class = ContentType
 
         register_deletion_side_effects(MyDeletionSideEffects)
-        self.assertEquals(_DELETION_SIDE_EFFECTS, {
+        self.assertEqual(_DELETION_SIDE_EFFECTS, {
             ContentType: set([MyDeletionSideEffects])
         })
 
@@ -139,7 +139,7 @@ class TestRegisterDeletionSideEffects(TransactionTestCase):
 
         register_deletion_side_effects(MyDeletionSideEffects)
         register_deletion_side_effects(MyDeletionSideEffects)
-        self.assertEquals(_DELETION_SIDE_EFFECTS, {
+        self.assertEqual(_DELETION_SIDE_EFFECTS, {
             ContentType: set([MyDeletionSideEffects])
         })
 
@@ -152,7 +152,7 @@ class TestRegisterDeletionSideEffects(TransactionTestCase):
 
         register_deletion_side_effects(MyDeletionSideEffects)
         register_deletion_side_effects(MyOtherDeletionSideEffects)
-        self.assertEquals(_DELETION_SIDE_EFFECTS, {
+        self.assertEqual(_DELETION_SIDE_EFFECTS, {
             ContentType: set([MyDeletionSideEffects, MyOtherDeletionSideEffects])
         })
 
