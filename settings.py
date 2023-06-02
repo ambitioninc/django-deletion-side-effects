@@ -51,12 +51,12 @@ def configure_settings():
                 'deletion_side_effects.tests',
             ),
             DEBUG=False,
-            MIDDLEWARE = (
+            MIDDLEWARE=(
                 'django.contrib.auth.middleware.AuthenticationMiddleware',
                 'django.contrib.messages.middleware.MessageMiddleware',
                 'django.contrib.sessions.middleware.SessionMiddleware'
             ),
-            TEMPLATES = [{
+            TEMPLATES=[{
                 'BACKEND': 'django.template.backends.django.DjangoTemplates',
                 'APP_DIRS': True,
                 'OPTIONS': {
