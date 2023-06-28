@@ -45,11 +45,26 @@ def configure_settings():
                 'django.contrib.auth',
                 'django.contrib.contenttypes',
                 'django.contrib.sessions',
+                'django.contrib.messages',
                 'django.contrib.admin',
                 'deletion_side_effects',
                 'deletion_side_effects.tests',
             ),
-            ROOT_URLCONF='deletion_side_effects.urls',
             DEBUG=False,
-            MIDDLEWARE_CLASSES=(),
+            MIDDLEWARE=(
+                'django.contrib.auth.middleware.AuthenticationMiddleware',
+                'django.contrib.messages.middleware.MessageMiddleware',
+                'django.contrib.sessions.middleware.SessionMiddleware'
+            ),
+            TEMPLATES=[{
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'APP_DIRS': True,
+                'OPTIONS': {
+                    'context_processors': [
+                        'django.contrib.auth.context_processors.auth',
+                        'django.contrib.messages.context_processors.messages',
+                        'django.template.context_processors.request',
+                    ]
+                }
+            }],
         )
