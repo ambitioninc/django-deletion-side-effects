@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v2.1.0
+------
+* drop django 2
+* django 4.2
+
 v2.0.0
 ------
 * drop django 2.0, 2.1
