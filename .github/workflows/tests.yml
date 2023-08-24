@@ -22,15 +22,24 @@ jobs:
           - 'Django~=4.0.0'
           - 'Django~=4.1.0'
           - 'Django~=4.2.0'
+        psycopg:
+          - 'psycopg2==2.9.6'
+          - 'psycopg==3.1.10'
 
         experimental: [false]
         exclude:
-        - python: '3.7'
-          django: 'Django~=4.0.0'
-        - python: '3.7'
-          django: 'Django~=4.1.0'
-        - python: '3.7'
-          django: 'Django~=4.2.0'
+          - python: '3.7'
+            django: 'Django~=4.0.0'
+          - python: '3.7'
+            django: 'Django~=4.1.0'
+          - python: '3.7'
+            django: 'Django~=4.2.0'
+          - psycopg: 'psycopg==3.1.10'
+            django: 'Django~=3.2.0'
+          - psycopg: 'psycopg==3.1.10'
+            django: 'Django~=4.0.0'
+          - psycopg: 'psycopg==3.1.10'
+            django: 'Django~=4.1.0'
     services:
       postgres:
         image: postgres:latest
